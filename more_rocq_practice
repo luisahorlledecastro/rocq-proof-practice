@@ -1,0 +1,138 @@
+(* Practice manipulating logical AND (/\) using destruct and split *)
+Lemma and_commutativity : forall P Q : Prop, P /\ Q -> Q /\ P.
+Proof.
+  intros P Q H.
+  destruct H.
+  split.
+  - apply H0.
+  - apply H.
+
+Qed.
+
+
+(* ================================================================= *)
+(* CBC Software Engineering - Rocq Practice File 2                   *)
+(* Focus: Logic, Case Analysis, Injections, and Contradictions       *)
+(* ================================================================= *)
+
+Require Import Nat.
+Require Import Bool.
+
+(* ================================================================= *)
+(* Section 1: Booleans vs Propositions                               *)
+(* Topic: Destructing booleans and bridging bools to Props.          *)
+(* Hint: Start with 'intros' and 'destruct b eqn:Heq'. Then handle   *)
+(* the '<->' using 'split'. Use 'discriminate' for impossibilities.  *)
+(* ================================================================= *)
+
+Lemma negb_is_false : forall b : bool,
+  negb b = true <-> b = false.
+Proof.
+  intros b.
+  destruct b eqn:Heq.
+  - split.
+    + (*forwards*)
+      unfold negb.
+      discriminate.
+    + unfold negb.
+      discriminate.
+  - split.
+    + (*forwards*)
+      easy.
+    + easy.
+      
+  
+Qed.
+
+(* ================================================================= *)
+(* Section 2: Option Types and Existentials                          *)
+(* Topic: Case analysis on Option types, OR (\/), and Exists.        *)
+(* Hint: Use 'destruct o eqn:Heq'. For the OR, use 'left' or 'right' *)
+(* depending on the branch. To provide a witness, use 'exists'.      *)
+(* ================================================================= *)
+
+Lemma option_cases : forall (o : option nat),
+  o = None \/ exists n, o = Some n.
+Proof.
+  intros o.
+  destruct o eqn:Heq.
+  + right.
+    exists n.
+    reflexivity.
+  + left.
+    reflexivity.
+  
+Qed.
+
+(* ================================================================= *)
+(* Section 3: Injections and Constructor Equality                    *)
+(* Topic: Proving equality by stripping constructors.                *)
+(* Hint: 'Some' is a constructor of the option type, just like 'S'   *)
+(* is for nat. If you have 'Some x = Some y', use 'injection'.       *)
+(* ================================================================= *)
+
+Lemma some_inj : forall (x y : nat),
+  Some x = Some y -> x = y.
+Proof.
+  intros x y H.
+  injection H.
+  easy.
+
+Qed.
+
+(* ================================================================= *)
+(* Section 4: Pure Logic (Modus Tollens)                             *)
+(* Topic: Working with implications and negations.                   *)
+(* Hint: In Rocq, '~X' (NOT X) is defined as 'X -> False'.           *)
+(* You can type 'unfold not.' to expand the '~' signs if it helps.   *)
+(* You will need to use 'apply' to chain your hypotheses together.   *)
+(* ================================================================= *)
+
+
+Lemma modus_tollens : forall P Q : Prop,
+  (P -> Q) -> ~Q -> ~P.
+Proof.
+  intros P Q H1 H2.
+  intros H3.
+  apply H2.
+  apply H1.
+  apply H3.
+
+Qed.
+
+(* ================================================================= *)
+(* Section 5: The "Explosion" Principle (Ex Falso Quodlibet)         *)
+(* Topic: Solving any goal when given a contradictory premise.       *)
+(* Hint: You don't need to know how to prove 2 + 2 = 5! Look at      *)
+(* your premise (S n = 0). Use 'discriminate' to blow up the goal.   *)
+(* ================================================================= *)
+
+Lemma impossible_math : forall n : nat,
+  S n = 0 -> 2 + 2 = 5.
+Proof.
+  intros n H.
+  exfalso.
+  discriminate.
+
+Qed.
+
+(* ================================================================= *)
+(* Section 6: Double Destruct & Logic                                *)
+(* Topic: Analyzing nested conditions.                               *)
+(* Hint: You have two booleans. You will need to use 'destruct' on   *)
+(* 'a' and then 'destruct' on 'b'.                                   *)
+(* ================================================================= *)
+
+Lemma andb_true : forall a b : bool,
+  andb a b = true -> a = true /\ b = true.
+Proof.
+  intros a b.
+  destruct a.
+  - destruct b.
+    easy.
+    discriminate.
+  - destruct b.
+    discriminate.
+    easy.
+
+Qed.
