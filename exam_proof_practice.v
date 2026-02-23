@@ -23,10 +23,28 @@ Proof.
   intros n.
   destruct (divides 2 n) eqn:Heq.
   - (* Goal 1: The 'true' case *)
-    
+    split.
+    + (*forward*)
+      intros _.
+      unfold divides in Heq.
+      apply Nat.eqb_eq in Heq.
+      apply Heq.
+    + (*backward*)
+      intros _.
+      reflexivity.
   - (* Goal 2: The 'false' case *)
-    
-Admitted. (* Replace Admitted with Qed when you are done! *)
+    split.
+    + (*forward*)
+      intros H.
+      discriminate H.
+    + (*backward*)
+      intros H.
+      unfold divides in Heq.
+      rewrite H in Heq.
+      simpl in Heq.
+      discriminate Heq.
+
+Qed. (* Replace Admitted with Qed when you are done! *)
 
 
 (* ================================================================= *)
@@ -36,14 +54,19 @@ Admitted. (* Replace Admitted with Qed when you are done! *)
 (* Practice using the 'injection' tactic *)
 Lemma succ_inj_practice : forall n m : nat, S n = S m -> n = m.
 Proof.
-  
-Admitted.
+  intros n m H.
+  injection H as Heq.
+  apply Heq.
+
+Qed.
 
 (* Practice using the 'discriminate' tactic to solve impossibilities *)
 Lemma zero_not_succ : forall n : nat, 0 = S n -> False.
 Proof.
+  intros n H.
+  discriminate H.
   
-Admitted.
+Qed.
 
 
 (* ================================================================= *)
@@ -53,11 +76,22 @@ Admitted.
 (* Practice manipulating logical OR (\/) using destruct, left, and right *)
 Lemma or_commutativity : forall P Q : Prop, P \/ Q -> Q \/ P.
 Proof.
+  intros P Q H.
+  destruct H as [HP | HQ].
+  - right.
+    apply HP.
+  - left.
+    apply HQ.
   
-Admitted.
+Qed.
 
 (* Practice manipulating logical AND (/\) using destruct and split *)
 Lemma and_commutativity : forall P Q : Prop, P /\ Q -> Q /\ P.
 Proof.
+  intros P Q H.
+  destruct H.
+  split.
+  - apply H0.
+  - apply H.
 
-Admitted.
+Qed.
